@@ -23,7 +23,7 @@ class transaction:
         self.date = words[1]
         self.use = words[4]
         self.amount = words[14]
-
+        self.data = [self.account,self.categorie,self.reciever,self.date,self.use,self.amount]
     # take the row and extract the words char by char
     # remove ",',[,]
     def stringCutElements(self):
@@ -44,3 +44,6 @@ class transaction:
     def returnElements(self):
         print(
             "Account: " + self.account + ", Categorie: " + self.categorie + ", reciever: " + self.reciever + ", date:" + self.date + ", use" + self.use + ", amount:" + self.amount)
+
+    def asString(self):
+        return self.account+" "+self.categorie+" "+self.reciever+" "+self.date+" "+self.use+" "+self.amount

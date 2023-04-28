@@ -1,13 +1,17 @@
 import csv
+
+from PyQt6 import QtCore
 from PyQt6.QtWidgets import *
 from screeninfo import get_monitors
 import sys
+
+from module.CSVReader import CSVReader
 from module.transaction import transaction
 
 
 class MWindow:
     def __init__(self, name):
-        self.transactions = None
+        self.transactions = []
         self.filename = None
         self.app = QApplication([])
         self.window = QWidget()
@@ -52,6 +56,7 @@ class MWindow:
         self.table.setGeometry(int(self.width / 8), int(self.height * 1 / 5), int(self.width * 3 / 4),
                                int(self.height * 3 / 5))
         self.table.setColumnCount(6)
+        self.table.sortItems(3, QtCore.Qt.SortOrder.AscendingOrder)
         # set widths of the column
         self.table.setColumnWidth(0, int(self.width / 10))
         self.table.setColumnWidth(1, int(self.width / 10))
@@ -62,12 +67,10 @@ class MWindow:
 
     # import the transactions from as csv and add them to the table
     def importCsv(self):
+
         self.filename, _ = QFileDialog.getOpenFileName(parent=self.window)
-        self.transactions = []
-        with open(self.filename, "r", encoding='ISO-8859-1') as file:
-            csvreader = csv.reader(file)
-            for row in csvreader:
-                self.transactions.append(transaction(row))
+        reader = CSVReader(self.filename,self.transactions)
+        self.transactions = reader.transactions
         self.fillTable()
 
     # add to the table
@@ -102,7 +105,7 @@ class MWindow:
     def recieverToCategorie(self, reciever, categorie):
         trCounter = 0
         for tr in self.transactions:
-            if tr.reciever == reciever:
+            if tr.reciever == reciever and reciever != "Unknown":
                 tr.categorie = categorie
                 self.table.setItem(trCounter, 1, QTableWidgetItem(categorie))
             trCounter += 1

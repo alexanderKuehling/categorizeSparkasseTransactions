@@ -70,8 +70,9 @@ class MWindow:
     def importCsv(self):
 
         self.filename, _ = QFileDialog.getOpenFileName(parent=self.window)
-        reader = CSVReader(self.filename,self.transactions)
-        self.transactions = reader.transactions
+        if not self.filename =="":
+            reader = CSVReader(self.filename,self.transactions)
+            self.transactions = reader.transactions
         self.fillTable()
 
     # add to the table

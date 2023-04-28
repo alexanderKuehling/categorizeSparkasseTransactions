@@ -15,7 +15,8 @@ class transaction:
     def extractProperties(self):
         words = self.stringCutElements()
         self.account = words[0]
-        self.categorie = ""
+        if self.account == "Auftragskonto":self.categorie= "Kategorie:"
+        else: self.categorie = ""
         if words[11] == " ":
             self.reciever = "Unknown"
         else:
@@ -46,4 +47,4 @@ class transaction:
             "Account: " + self.account + ", Categorie: " + self.categorie + ", reciever: " + self.reciever + ", date:" + self.date + ", use" + self.use + ", amount:" + self.amount)
 
     def asString(self):
-        return self.account+" "+self.categorie+" "+self.reciever+" "+self.date+" "+self.use+" "+self.amount
+        return self.account+","+self.categorie+","+self.reciever+","+self.date+","+self.use+","+self.amount+"\n"

@@ -1,4 +1,5 @@
 import csv
+import os.path
 
 from PyQt6 import QtCore
 from PyQt6.QtWidgets import *
@@ -85,7 +86,13 @@ class MWindow:
     #export the transaction list to a by the user specified location as a csv file
     def exportCsv(self):
         directory = QFileDialog.getExistingDirectory()
-        with open(directory+"/umsatzCategorized.csv","w") as file:
+        if(os.path.isfile(directory+"/umsatzCategorized.csv")):
+            name = ""
+            for i in range(2,20):
+                name = "/umsatzCategorized("+str(i)+").csv"
+                if not os.path.isfile(directory+name):
+                    break
+        with open(directory+name,"w") as file:
             for tr in self.transactions:
                 file.write(tr.asString())
             file.close()

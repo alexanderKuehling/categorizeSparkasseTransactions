@@ -112,6 +112,7 @@ class MWindow:
                 name = "/umsatzCategorized("+str(i)+").csv"
                 if not os.path.isfile(directory+name):
                     break
+            else: name = "/umsatzCategorized.csv"
         with open(directory+name,"w") as file:
             for tr in self.transactions:
                 file.write(tr.asString())

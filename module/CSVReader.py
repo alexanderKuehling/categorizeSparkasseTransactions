@@ -1,5 +1,44 @@
 from module.transaction import transaction
 import csv
+from openpyxl import load_workbook
+
+
+#read transactions from default.xlsm as base for transactions array
+def readInit():
+    wb = load_workbook(filename="module/default.xlsm",keep_vba=True)
+    sheet = wb.worksheets[0]
+    #create transactions object with first row as column names
+    transactions = [transaction(["Auftragskonto","Kategorie","Beguenstigter/Zahlungspflichtiger","Buchungsmonat","Verwendungszweck","Betrag"])]
+    #get number of rows
+    m_col = sheet.max_row
+    for i in range(2,m_col+1):
+        data = []
+        for j in range(1,7):
+            val = str(sheet.cell(i,j).value)
+            if(val == "None"): val = ""
+            data.append(val)
+        transactions.append(transaction(data))
+    return transactions
+def writeExit(transactions):
+    wb = load_workbook(filename="module/default.xlsm",keep_vba=True)
+    sheet = wb.worksheets[0]
+    transactionCounter = 1
+    for tr in transactions:
+
+        for i in range(1,7):
+            sheet.cell(transactionCounter,i).value = tr.data[i-1]
+        transactionCounter +=1
+    wb.save("module/default.xlsm")
+def resetDefault():
+    wb = load_workbook(filename="module/default.xlsm", keep_vba=True)
+    sheet = wb.worksheets[0]
+    m_col = sheet.max_row
+    for i in range(1, m_col + 1):
+        for j in range(1, 7):
+            sheet.cell(i, j).value = None
+    wb.save("module/default.xlsm")
+
+
 class CSVReader:
     def __init__(self,filename,transactions):
         if len(transactions) == 0: self.transactionsEmpty = True
@@ -37,20 +76,25 @@ class CSVReader:
         words = self.stringCutElements(row)
         account = words[0]
         if account == "Auftragskonto":
-            categorie = "Kategorie:"
+            categorie = "Kategorie"
         else:
             categorie = ""
         if words[11] == "":
             reciever = "Unknown"
         else:
             reciever = words[11]
-        date = words[1]
+        months = ["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"]
+        try:
+            date = months[int(words[1][3:5])-1]
+        except:
+            date = "Buchungsmonat"
         use = words[4]
         amount = words[14]
         return [account, categorie, reciever, date, use, amount]
 
     # take the row and extract the words char by char
     # remove ",',[,]
+
     def stringCutElements(self, row):
         words = []
         word = ""
